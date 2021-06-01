@@ -1,0 +1,150 @@
+# Комманды:
+# /globalbooster число время # ВРЕМЯ В СЕКУНДАХ
+# /sellbooster ник чило
+# /autosell 
+# /sellall
+#
+# /autosell stats - не полностью сделано 
+#
+# Права:
+#   autosell.admnin - доступ к /sellbooster и /globalbooster
+#   autosell.user - доступ к /autosell use
+#   autosell.user.beta - доступ к /autosell stats
+#   autosell.sellall - доступ к /sellall
+#
+# PAPI placeholders:
+# %autosell_global_booster% глобальный бустер
+# %autosell_global_booster_time% время глобального бустера в секундах
+# %autosell_player_booster% бустер игрока
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# ЭТО ВСЕГО ЛИШЬ ШАБЛОН С ПОМОЩЬЮ КОТОРОГО ВЫ МОЖЕТЕ СДЕЛАТЬ Авто-Продажу
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+options:
+    prefix: &c&l[&a&lAUTO-SELL&c&l]
+    booster: &c&lМножитель &4&l-> &6%{sell_booster.%player%}%x
+    coal_price: 2
+    obsidian_price: 1
+on load:
+    if {gsell_booster} is not set:
+        set {gsell_booster} to 1
+    else:
+        stop
+on placeholderapi placeholder request for the prefix "autosell":
+  if the identifier is "global_booster":
+    set the result to "%{gsell_booster}%"
+  if the identifier is "global_booster_time":
+    set the result to "%{delb_time}%"
+  if the identifier is "player_booster":
+    set the result to "%{sell_booster.%player%}%"
+on first join:
+    set {autosell.%player%} to "false"
+    set {total_mined_coal.%player%} to 0
+    set {selled.obsidian.%player%} to 0
+    if {sell_booster.%player%} is not set:
+        set {sell_booster.%player%} to 1
+on join:
+    set {autosell.%player%} to "false"
+    if {sell_booster.%player%} is not set:
+        set {sell_booster.%player%} to 1
+command /autosell [<text=help>]:
+    trigger:
+        if arg-1 is "help":
+            message "&c&l&m---------------------------" to player
+            message "&a&l/sellall - продать содержимое инвентаря"
+            message "&a&l/autosell use - Вкл/Выкл авто продажу" to player
+            message "&a&l/autosell stats - показать статистику" to player
+            message "&c&l&m---------------------------" to player
+        if arg-1 is "use":
+            if player has permission "autosell.user":
+                if {autosell.%player%} is "true":
+                    message "{@prefix} &e&lДеактивирована авто-продажа" to player
+                    set {autosell.%player%} to "false"
+                if {autosell.%player%} is "false":
+                    message "{@prefix} &e&lАктивирована авто-продажа" to player
+                    set {autosell.%player%} to "true"
+            else:
+                message "{@prefix} &e&lНедостаточно прав" to player
+        if arg-1 is "stats":
+            if player has permission "autosell.user.beta":
+                set {total_mined_coal.%player%} to {coal_1.%player%} + {mined_1.coal.%player%} 
+                set {total_mined_obsidian.%player%} to {mined_1.obsidian.%player%} + {obsidian_1.%player%}
+                set {selled.obsidian.%player%} to {total_mined_obsidian.%player%} * {@obsidian_price} * {sell_booster.%player%}
+                set {selled.coal.%player%} to {total_mined_coal.%player%} * {@coal_price} * {sell_booster.%player%} 
+                message "&2&m     &6&m   {@prefix}&6&m   &2&m     " to player
+                message "&7--> &fПродано &7Обсидиана &4&l%{total_mined_obsidian.%player%}%&fшт &cза &6&l%{selled.obsidian.%player%}%$ &8| {@booster}" to player
+                message "&7--> &fПродано &7Угля &4&l%{total_mined_coal.%player%}%&fшт &cза &6&l%{selled.coal.%player%}%$ &8| {@booster}" to player
+            else:
+                message "{@prefix} &e&lНедостаточно прав" to player
+command /sellbooster <player> <number> [<number>]:
+    trigger:
+        if player has permission "autosell.admnin":
+            if arg-2 <= 1:
+                set {sell_booster.%arg-1%} to 1.1
+                message "Бустер игрока %arg-1% установлен на 1.1x" to sender
+            else:
+                set {sell_booster.%arg-1%} to arg-2
+                message "Бустер игрока %arg-1% установлен на %arg-2%x" to sender
+        else:
+            message "{@prefix} &e&lНедостаточно прав" to player
+command /globalbooster <number> [<number>]:
+    trigger:
+        if player has permission "autosell.admnin":
+            if arg-1 <= 1:
+                set {gsell_booster} to 1.1
+                message "Глобальный бустер установлен на 1.1x" to sender
+                if arg-2 is set:
+                    set {delb_time} to arg-2
+            else:
+                set {gsell_booster} to arg-1
+                message "Глобальный бустер установлен на %arg-1%x, на время %arg-2%" to sender
+                if arg-2 is set:
+                    set {delb_time} to arg-2
+        else:
+            message "{@prefix} &e&lНедостаточно прав" to player
+every 1 second:
+    if {delb_time} is not set:
+        set {delb_time} to 0
+    if {delb_time} <= 0:
+        set {gsell_booster} to 1
+    if {delb_time} >= 1:
+        remove 1 from {delb_time}
+command /sellall:
+    trigger:
+        if player has permission "autosell.sellall":
+            set {amount.coal.%player%} to number of coal in player's inventory
+            remove all coal from player's inventory
+            set {amount.obsidian.%player%} to number of obsidian in player's inventory
+            remove all obsidian from player's inventory    
+            set {sell.obsidian.%player%} to {@coal_price} * {amount.obsidian.%player%} * {sell_booster.%player%}
+            set {sell.coal.%player%} to {@obsidian_price} * {amount.coal.%player%} * {sell_booster.%player%} * {gsell_booster}
+            set {add_balance.%player%} to {sell.coal.%player%} + {sell.obsidian.%player%}
+            add {add_balance.%player%} to balance of player
+            send action bar "{@prefix} &a&l+&6&l%{add_balance.%player%}%$ &f| {@booster}" to player
+        else:
+            message "{@prefix} &e&lНедостаточно прав" to player
+            stop
+every 1 tick:
+    loop all players:
+        if {autosell.%loop-player%} is "true":
+            set {amount.coal.%loop-player%} to number of coal in loop-player's inventory
+            remove all coal from loop-player's inventory
+            set {amount.obsidian.%loop-player%} to number of obsidian in loop-player's inventory
+            remove all obsidian from loop-player's inventory    
+            set {sell.obsidian.%loop-player%} to {@coal_price} * {amount.obsidian.%loop-player%} * {sell_booster.%loop-player%} * {gsell_booster}
+            set {sell.coal.%loop-player%} to {@obsidian_price} * {amount.coal.%loop-player%} * {sell_booster.%loop-player%} * {gsell_booster}
+            set {add_balance.%loop-player%} to {sell.coal.%loop-player%} + {sell.obsidian.%loop-player%}
+            add {add_balance.%loop-player%} to balance of loop-player
+on mine:
+    if {autosell.%player%} is "true":
+        give drops of block using player's tool to player
+        clear drops         
+
+# --------------------------------------
+# AutoSell by King5442
+# Version 1.1
+# ---------------------------------------
+
+
