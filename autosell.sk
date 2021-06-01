@@ -6,7 +6,7 @@
 # /autosmelt 
 #
 # Права:
-#   autosell.admnin - доступ к /sellbooster и /globalbooster
+#   autosell.admin - доступ к /sellbooster и /globalbooster
 #   autosell.user - доступ к /autosell use и /autosell stats
 #   autosell.sellall - доступ к /sellall
 #   autosmelt.use - доступ к /autosmelt
@@ -93,7 +93,7 @@ command /autosmelt:
                 message "{@prefix_auto-smelt} &eАвто-плавка &4Выкл" 
 command /sellbooster <player> <number>:
     trigger:
-        if player has permission "autosell.admnin":
+        if player has permission "autosell.admin":
             if arg-2 <= 1:
                 set {sell_booster.%arg-1%} to 1.1
                 message "{@prefix_auto-sell}  Бустер игрока %arg-1% установлен на 1.1x" to sender
@@ -104,7 +104,7 @@ command /sellbooster <player> <number>:
             message "{@prefix_auto-sell} &e&lНедостаточно прав" to player
 command /globalbooster <number> [<number>]:
     trigger:
-        if player has permission "autosell.admnin":
+        if player has permission "autosell.admin":
             if arg-1 <= 1:
                 set {gsell_booster} to 1.1
                 message "{@prefix_auto-sell}  Глобальный бустер установлен на 1.1x" to sender
