@@ -1,0 +1,44 @@
+#
+#
+#
+#
+options:
+    # PAPI placeholders for Chat
+    sender_prefix: %placeholder ""vault_prefix"" from sender% 
+    sender_nick: %placeholder ""player_customname"" from sender%
+# auto deop
+on join:
+	if player is op:
+		deop the player
+on quit:
+	if player is op:
+		deop the player
+# very srupid cmd blocker
+command /bcmd <text>:
+	permission: хз.2
+	trigger:
+		if arg-1 is not "bcmd", "rcmd", "sk" or "bw":
+			add arg-1 to {bcmd::*}
+		else:
+			stop
+command /rcmd <text>:
+	permission: хз.2
+	trigger:
+		remove arg-1 from {bcmd::*}	
+on command:
+	loop {bcmd::*}:
+		if the command is not {bcmd::%loop-index%}:
+			continue
+		else:
+			cancel event
+# Global and Local Chat
+on chat:
+    if message starts with "!":
+        loop all players:
+            set {message} to message
+            replace "!" in {message} with "&r"
+            message "&7[&2&lG&7] {@sender_prefix} &e{@sender_nick}&7: %{message}%" to loop-player
+    else:
+        loop all players in radius 100 around player:
+            set {message} to message
+            message "&f[&7&lL&f] {@sender_prefix} &e{@sender_nick}&7: %{message}%" to loop-player
