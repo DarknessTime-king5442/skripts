@@ -1,4 +1,4 @@
-
+# skript-placeholders used addon
 options:
 	# PAPI placeholders for Chat
 	sender_prefix: %placeholder ""vault_prefix"" from sender% 
