@@ -1,0 +1,33 @@
+# adding player in to varible for checking world (this need for use auth world and lobby world) (examples)
+on player world change:
+	world is "world"
+	add player to {inlobby::*}
+on teleport:
+	world is "world"
+	add player to {inlobby::*}
+on join:
+	remove player from {inlobby::*}
+on drop:
+	cancel event
+
+# adding item to player's inventory and removing items in another slots
+every 3 ticks:
+	loop {inlobby::*}:
+		set {inlobbyitems} to number of nether stars in {inlobby::%loop-index%}'s inventory
+		if {inlobbyitems} > 1:
+			clear {inlobby::%loop-index%}'s inventory
+			set slot 4 of {inlobby::%loop-index%} to 1 nether star named "&7" with lore "&e&l>> &2Выбрать сервер"
+			continue
+		else:
+			continue
+
+# item actions
+on click holding a nether star:
+	make player execute command "/servers"
+
+# item actions for item with certain lore
+#on click holding a nether star:
+#  if "%item's lore%" contains "&e&l>> &2Выбрать сервер":
+#	  make player execute command "/servers"
+
+
