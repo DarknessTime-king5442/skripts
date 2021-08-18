@@ -2,7 +2,7 @@
 options:
 	# PAPI placeholders for Chat
 	sender_prefix: %placeholder ""vault_prefix"" from sender% 
-	sender_nick: %placeholder ""player_customname"" from sender%
+	sender_nick: %placeholder ""player_custom_name"" from sender%
 # auto deop
 on join:
 	if player is op:
@@ -10,11 +10,11 @@ on join:
 on quit:
 	if player is op:
 		deop the player
-# very stupid cmd blocker
+# very stupid cmd blocker, but it work
 command /bcmd <text>:
 	permission: хз.2
 	trigger:
-		if arg-1 is not "bcmd", "rcmd", "sk" or "bw":
+		if arg-1 is not "bcmd", "rcmd" or "sk":
 			add arg-1 to {bcmd::*}
 		else:
 			stop
@@ -28,15 +28,17 @@ on command:
 			continue
 		else:
 			cancel event
+
+
 # Global and Local Chat via Skript
 on chat:
-	if message starts with "!":
+	if message starts with "!": # Global
 		loop all players:
 			set {message} to message
 			replace "!" in {message} with "&r"
 			message "&7[&2&lG&7] {@sender_prefix} &e{@sender_nick}&7: %{message}%" to loop-player
 			cancel event
-	else:
+	else: # Local
 		loop all players in radius 100 around player:
 			set {message} to message
 			message "&f[&7&lL&f] {@sender_prefix} &e{@sender_nick}&7: %{message}%" to loop-player
