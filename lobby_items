@@ -27,7 +27,7 @@ on click holding a nether star:
 
 # item actions for item with certain lore
 #on click holding a nether star:
-#  if "%item's lore%" contains "&e&l>> &2Выбрать сервер":
-#	  make player execute command "/servers"
+#	if "%lore of item%" contains "&e&l>> &2Выбрать сервер":
+#		make player execute command "/servers"
 
 
