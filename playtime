@@ -1,0 +1,61 @@
+options:
+	cmd: playtime
+	permission: playtime.use
+	message_no_permission: &c&lНедостаточно прав
+	message_top: &8&l&m===================================
+	message_footer: &8&l&m===================================
+	message_nick: &2Игрок&7: &a%{_p}%
+	message_playtime: &2Наиграно времени:
+	message_time_format: &d%{year}% &2лет, &d%{month}% &2мес, &d%{day}% &2дней, &d%{min}% &2мин, &d%{sec}% &2сек
+variables:
+	{playtime_sec::%{_p}%} = 0
+	{playtime_min::%{_p}%} = 0
+	{playtime_hour::%{_p}%} = 0
+	{playtime_day::%{_p}%} = 0
+	{playtime_month::%{_p}%} = 0
+	{playtime_year::%{_p}%} = 0
+command /{@cmd} [<offline player>]:
+	permission: {@permission}
+	permission message: {@message_no_permission}
+	trigger:
+		if arg-1 is not set:
+			playtime_cmd(sender)
+		else:
+			playtime_cmd(arg-1)
+every 1 second:
+	loop all players:
+		playtime_calc(loop-player)
+function playtime_calc(p: player):
+	add 1 to {playtime_sec::%{_p}%}
+	if {playtime_sec::%{_p}%} >= 60:
+		subtract 60 from {playtime_sec::%{_p}%}
+		add 1 to {playtime_min::%{_p}%}
+		if {playtime_min::%{_p}%} >= 60:
+			subtract 60 from {playtime_min::%{_p}%}
+			add 1 to {playtime_hour::%{_p}%}
+			if {playtime_hour::%{_p}%} >= 24:
+				subtract 24 from {playtime_hour::%{_p}%}
+				add 1 to {playtime_day::%{_p}%}
+				if {playtime_day::%{_p}%} >= 30:
+					subtract 30 from {playtime_day::%{_p}%}
+					add 1 to {playtime_month::%{_p}%}
+					if {playtime_month::%{_p}%} >= 12:
+						subtract 12 from {playtime_year::%{_p}% 0
+						add 1 to {playtime_year::%{_p}%}
+function join_actions(p: player):
+	if {mob_kills.%{_p}%} is not set:
+		set {mob_kills.%{_p}%} to 0
+	if {broken_block.%{_p}%} is not set:
+		set {broken_block.%{_p}%} to 0	
+function playtime_cmd(p: player):
+	set {sec} to {playtime_sec::%{_p}%}
+	set {min} to {playtime_min::%{_p}%}
+	set {hour} to {playtime_hour::%{_p}%}
+	set {day} to {playtime_day::%{_p}%}
+	set {month} to {playtime_month::%{_p}%}
+	set {year} to {playtime_year::%{_p}%}
+	message "{@message_top}" to {_p}
+	message "{@message_nick}" to {_p}
+	message "{@message_playtime}" to {_p}
+	message "{@message_time_format}" to {_p}
+	message "{@message_footer}" to {_p}
