@@ -20,6 +20,8 @@ options:
 	#Цены 
 	coal_price: 2
 	obsidian_price: 1
+variables:
+	{autosell.%player%} = false
 on join:
 	if {autosell.%player%} is not set:
 		set {autosell.%player%} to false
@@ -40,13 +42,6 @@ command /sellall:
 		sell(player)
 		message " " to sender
 		message "    {@prefix_auto-sell} &a&l+&6&l%{add_balance.%player%}%$" to sender
-every 1 second:
-	if {delb_time} is not set:
-		set {delb_time} to 0
-	if {delb_time} <= 0:
-		set {gsell_booster} to 1
-	if {delb_time} >= 1:
-		remove 1 from {delb_time}
 every 1 tick:
 	loop all players:
 		if {autosell.%loop-player%} is true:
@@ -58,11 +53,11 @@ on mine:
 			clear drops
 			sell(player)
 function sell(p: player):
-	set {amount.coal.%{_p}%} to number of coal in {_p}'s inventory
-	set {amount.obsidian.%{_p}%} to number of obsidian in {_p}'s inventory
+	set {amount_coal} to number of coal in {_p}'s inventory
+	set {amount_obsidian} to number of obsidian in {_p}'s inventory
 	remove all coal and obsidian from {_p}'s inventory  
-	set {add_balance} to ({@obsidian_price} * {amount.coal.%{_p}%}) + ({@coal_price} * {amount.obsidian.%{_p}%})
+	set {add_balance} to ({@obsidian_price} * {amount_obsidian}) + ({@coal_price} * {amount_coal})
 	add {add_balance} to balance of {_p}
-	send action bar "{@prefix_auto-sell} &a&l+&6&l%{add_balance.%{_p}%}%$" to {_p}
-	delete {amount.obsidian.%{_p}%} 
-	delete {amount.coal.%{_p}%}
+#	send action bar "{@prefix_auto-sell} &a&l+&6&l%{add_balance}%$" to {_p}
+	delete {amount_obsidian} 
+	delete {amount_coal.}
