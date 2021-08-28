@@ -1,11 +1,11 @@
-# adding player in to varible for checking world (this need for use auth world and lobby world) (examples)
+#checking players world and adding player to variable (this need for use auth world and lobby world) (examples)
 on player world change:
 	world is "world"
 	add player to {inlobby::*}
 on teleport:
 	world is "world"
 	add player to {inlobby::*}
-on join:
+on leave:
 	remove player from {inlobby::*}
 on drop:
 	cancel event
