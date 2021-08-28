@@ -61,9 +61,8 @@ function sell(p: player):
 	set {amount.coal.%{_p}%} to number of coal in {_p}'s inventory
 	set {amount.obsidian.%{_p}%} to number of obsidian in {_p}'s inventory
 	remove all coal and obsidian from {_p}'s inventory  
-	set {add_balance.%{_p}%} to ({@obsidian_price} * {amount.coal.%{_p}%}) + ({@coal_price} * {amount.obsidian.%{_p}%})
-	add {add_balance.%{_p}%} to balance of {_p}
+	set {add_balance} to ({@obsidian_price} * {amount.coal.%{_p}%}) + ({@coal_price} * {amount.obsidian.%{_p}%})
+	add {add_balance} to balance of {_p}
 	send action bar "{@prefix_auto-sell} &a&l+&6&l%{add_balance.%{_p}%}%$" to {_p}
-	delete {add_balance.%{_p}%}
 	delete {amount.obsidian.%{_p}%} 
 	delete {amount.coal.%{_p}%}
