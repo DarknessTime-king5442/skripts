@@ -1,8 +1,8 @@
 # skript-placeholders used addon
 options:
 	# PAPI placeholders for Chat
-	sender_prefix: %placeholder ""vault_prefix"" from sender% 
-	sender_nick: %placeholder ""player_custom_name"" from sender%
+	sender_prefix: %placeholder ""vault_prefix"" from player% 
+	sender_nick: %placeholder ""player_custom_name"" from player%
 # auto deop
 on join:
 	if player is op:
