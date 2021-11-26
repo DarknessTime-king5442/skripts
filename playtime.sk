@@ -40,7 +40,7 @@ function playtime_calc(p: player):
 					subtract 30 from {playtime_day::%{_p}%}
 					add 1 to {playtime_month::%{_p}%}
 					if {playtime_month::%{_p}%} >= 12:
-						subtract 12 from {playtime_year::%{_p}% 0
+						subtract 12 from {playtime_year::%{_p}%}
 						add 1 to {playtime_year::%{_p}%}
 function join_actions(p: player):
 	if {mob_kills.%{_p}%} is not set:
